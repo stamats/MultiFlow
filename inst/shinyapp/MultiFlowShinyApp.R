@@ -8,6 +8,7 @@ library(shinyjs)
 library(shinythemes)
 library(EBImage)
 library(ShinyImage)
+library(fs)
 library(shinyFiles)
 library(DT)
 library(rmarkdown)
@@ -834,37 +835,37 @@ server <- function(input, output, session) {
   
   recursiveRunCali <- eventReactive(input$runCali,{
     isolate({
-      PATH.OUT <- parseDirPath(c(wd="."), input$folder)
+      PATH.OUT <- parseDirPath(c(wd=fs::path_home()), input$folder)
       FORMULA <- input$formula
       SUBSET <- input$subset
       save(AveragedData, FORMULA, SUBSET, PATH.OUT, 
-           file = paste0(PATH.OUT,"CalibrationData.RData"))
+           file = paste0(PATH.OUT,"/CalibrationData.RData"))
       
-      file.copy(from = system.file("rmarkdown", "CalibrationAnalysis.Rmd", 
+      file.copy(from = system.file("markdown", "CalibrationAnalysis.Rmd", 
                                    package="MultiFlow"), 
                 to = paste0(PATH.OUT, "/CalibrationAnalysis.Rmd"))
-      
+#      rmarkdown::render(input = system.file("rmarkdown", "CalibrationAnalysis.Rmd", 
+#                                            package="MultiFlow"),
+#                        output_file = paste0(PATH.OUT, "/CalibrationAnalysis.html"))
       rmarkdown::render(input = paste0(PATH.OUT, "/CalibrationAnalysis.Rmd"),
                         output_file = paste0(PATH.OUT, "/CalibrationAnalysis.html"))
       
       load(file = paste0(PATH.OUT, "/CalibrationResults.RData"))
       
-      tmp <- strsplit(FORMULA, "~")[[1]]
-      y.var <- names(unlist(sapply(colnames(AveragedData), 
-                                   grep, x = tmp[1])))
       AIC.fit.sum <- summary(AIC.fit)
+      R2 <- round(AIC.fit.sum$r.squared, 3)
       adj.R2 <- round(AIC.fit.sum$adj.r.squared, 3)
-      DF <- data.frame(Concentration = AIC.fit$model[,y.var], 
+      DF <- data.frame(Observed = AIC.fit$model[,1], 
                        Fitted = fitted(AIC.fit))
       output$modelSummary <- renderPrint({ AIC.fit })
         
       output$plot5 <- renderPlot({
-        ggplot(DF, aes(x = Concentration, y = Fitted)) +
+        ggplot(DF, aes(x = Observed, y = Fitted)) +
           geom_point() + geom_abline(slope = 1, intercept = 0) +
           ylab("Fitted values") + 
-          annotate("text",  x=min(DF$Concentration), y = max(DF$Fitted), 
-                   label = substitute(paste("adj. ", R^2, " = ", adj.R2), 
-                                      list(adj.R2 = adj.R2)), 
+          annotate("text",  x=min(DF$Observed), y = max(DF$Fitted), 
+                   label = substitute(paste(R^2, " = ", R2, ", adj. ", R^2, " = ", adj.R2), 
+                                      list(R2 = R2, adj.R2 = adj.R2)), 
                    vjust=1, hjust=0, size = 5)
         
       })
@@ -886,7 +887,7 @@ server <- function(input, output, session) {
   
   recursiveOpenReport <- eventReactive(input$openReport,{
     isolate({
-      PATH.OUT <- parseDirPath(c(wd="."), input$folder)
+      PATH.OUT <- parseDirPath(c(wd=fs::path_home()), input$folder)
       browseURL(paste0(PATH.OUT, "/CalibrationAnalysis.html"),
                 browser = getOption("browser"))
     })
@@ -932,7 +933,7 @@ server <- function(input, output, session) {
     datatable(DF)
   })
   output$folder <- renderPrint({
-    paste0("Folder for Results: ", parseDirPath(c(wd="."), input$folder))
+    paste0("Folder for Results: ", parseDirPath(c(wd=fs::path_home()), input$folder))
   })
   
   #//////// END OF CODE FOR HELPFUL TEXTS /////////////
@@ -960,7 +961,7 @@ server <- function(input, output, session) {
       write.csv(AveragedData, file, row.names = FALSE)
     }
   )
-  shinyDirChoose(input, 'folder', roots=c(wd="."), filetypes=c(''))
+  shinyDirChoose(input, 'folder', roots=c(wd=fs::path_home()), filetypes=c(''))
 
   #//////// END OF CODE FOR DOWNLOAD BUTTON /////////////
   

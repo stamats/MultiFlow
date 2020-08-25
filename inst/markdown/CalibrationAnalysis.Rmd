@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 We import the data and select the variables needed for the analysis.
 ```{r}
-load("CalibrationData.RData")
+load(paste0(PATH.OUT, "/CalibrationData.RData"))
 tmp <- strsplit(FORMULA, "~")[[1]]
 y.var <- names(unlist(sapply(colnames(AveragedData), 
                              grep, x = tmp[1])))
@@ -69,15 +69,16 @@ AIC.fit.sum
 We plot the given concentrations against the fitted values.
 ```{r, warning=FALSE}
 library(ggplot2)
+R2 <- round(AIC.fit.sum$r.squared, 3)
 adj.R2 <- round(AIC.fit.sum$adj.r.squared, 3)
-DF <- data.frame(Concentration = calData[,y.var], 
+DF <- data.frame(Observed = AIC.fit$model[,1], 
                  Fitted = fitted(AIC.fit))
-ggplot(DF, aes(x = Concentration, y = Fitted)) +
+ggplot(DF, aes(x = Observed, y = Fitted)) +
   geom_point() + geom_abline(slope = 1, intercept = 0) +
   ylab("Fitted values") + 
-  annotate("text",  x=min(DF$Concentration), y = max(DF$Fitted), 
-           label = substitute(paste("adj. ", R^2, " = ", adj.R2), 
-                              list(adj.R2 = adj.R2)), 
+  annotate("text",  x=min(DF$Observed), y = max(DF$Fitted), 
+           label = substitute(paste(R^2, " = ", R2, ", adj. ", R^2, " = ", adj.R2), 
+                              list(R2 = R2, adj.R2 = adj.R2)), 
            vjust=1, hjust=0, size = 5)
 ```
 
