@@ -75,7 +75,7 @@ DF <- data.frame(Observed = AIC.fit$model[,1],
                  Fitted = fitted(AIC.fit))
 ggplot(DF, aes(x = Observed, y = Fitted)) +
   geom_point() + geom_abline(slope = 1, intercept = 0) +
-  ylab("Fitted values") + 
+  xlab("Observed values") + ylab("Fitted values") + 
   annotate("text",  x=min(DF$Observed), y = max(DF$Fitted), 
            label = substitute(paste(R^2, " = ", R2, ", adj. ", R^2, " = ", adj.R2), 
                               list(R2 = R2, adj.R2 = adj.R2)), 

@@ -900,7 +900,7 @@ server <- function(input, output, session) {
       output$plot5 <- renderPlot({
         ggplot(DF, aes(x = Observed, y = Fitted)) +
           geom_point() + geom_abline(slope = 1, intercept = 0) +
-          ylab("Fitted values") + 
+          xlab("Observed value") + ylab("Fitted values") + 
           annotate("text",  x=min(DF$Observed), y = max(DF$Fitted), 
                    label = substitute(paste(R^2, " = ", R2, ", adj. ", R^2, " = ", adj.R2), 
                                       list(R2 = R2, adj.R2 = adj.R2)), 
