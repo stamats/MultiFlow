@@ -11,5 +11,5 @@
 ###########################################################
 ## Version 0.2
 ###########################################################
-- App now also works for color images. For thresholding these images are 
-  transformed to greyscale using luminance.
+- App now also works for color images. For thresholding, these images are 
+  transformed to greyscale using luminance or standard RGB averaging.
