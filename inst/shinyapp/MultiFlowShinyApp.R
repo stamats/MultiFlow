@@ -27,7 +27,7 @@ ui <- fluidPage(
                        sidebarLayout(
                          sidebarPanel(
                            radioButtons("radio", 
-                                        label = ("Upload Image or Choose Sample"), 
+                                        label = ("1) Upload Image or Choose Sample"), 
                                         choices = list("Upload Image" = 1, 
                                                        "Sample Image" = 2), 
                                         selected = 1),
@@ -44,7 +44,7 @@ ui <- fluidPage(
                                          ".png",
                                          ".tiff"))
                            ),hr(style="border-color: black"),
-                           h4("Set number of strips and number of bands per strip",
+                           h5("2) Set number of strips and number of bands per strip",
                               style="font-weight:bold"),
                            sliderInput("strips", "Number of strips:", 
                                        min = 1, max = 7, value = 1),
@@ -62,19 +62,19 @@ ui <- fluidPage(
                                           brush = "plot_brush"),
                                '<br/>',
                                column(6, shinyjs::hidden(
-                                 actionButton("segmentation", label = "Apply Segmentation")
+                                 actionButton("segmentation", label = "4) Apply Segmentation")
                                )),
-                               tags$style(type='text/css', "#segmentation { display: block; width:60%; margin-left: auto; margin-right:auto;}"),
+                               tags$style(type='text/css', "#segmentation { display: block; width:70%; margin-left: auto; margin-right:auto;}"),
                                '<br/>','<br/>',
                                h3('Preview Crop', align = "center"),
                                h6('Click and drag where you would like to crop the photo. To keep the cropped version, press Apply Crop', align = "center"),
                                '<br/>',
                                plotOutput("plot2"),
-                               tags$style(type='text/css', "#keep { display:block; width:30%; margin-left: auto; margin-right:auto;}"),
                                '<br/>',
                                shinyjs::hidden(
-                                 actionButton("keep", label = "Apply Crop")
+                                 actionButton("keep", label = "3) Apply Crop")
                                ),
+                               tags$style(type='text/css', "#keep { display:block; width:30%; margin-left: auto; margin-right:auto;}"),
                                '<br/>',
                                verbatimTextOutput("info")
                              )
@@ -87,16 +87,16 @@ ui <- fluidPage(
           tabPanel("Background", value = "tab2",
                    sidebarLayout(
                      sidebarPanel(
-                       h4("Select strip", style="font-weight:bold"),
                        numericInput(inputId = "selectStrip",
-                                    label = "Select strip:",
+                                    label = "1) Select strip:",
                                     value = 1,
                                     min = 0,
                                     max = 7,
                                     step = 1,
                                     width = NULL
                        ),
-                       h4("Select threshold method and apply it",
+                       hr(style="border-color: black"),
+                       h5("2) Select threshold method and apply",
                           style="font-weight:bold"),
                        radioButtons("thresh", 
                                     label = ("Threshold Method"), 
@@ -114,9 +114,13 @@ ui <- fluidPage(
                                       width = NULL
                          )
                        ),
-                       actionButton("threshold", label = "Apply Threshold"), br(), br(),
-                       actionButton("data", label = "Add To Data"), br(), br(),
-                       actionButton("showIntensData", label = "Switch To Intensity Data")
+                       actionButton("threshold", label = "2) Apply Threshold"), br(),
+                       hr(style="border-color: black"),
+                       h5("3) Add to Data and go back to 1) or proceed with 4)",
+                          style="font-weight:bold"),
+                       actionButton("data", label = "3) Add To Data"), br(),
+                       hr(style="border-color: black"),
+                       actionButton("showIntensData", label = "4) Switch To Intensity Data")
                      ),
                      mainPanel(
                        HTML(
@@ -140,17 +144,20 @@ ui <- fluidPage(
           tabPanel("Intensity Data", value = "tab3",
             sidebarLayout(
               sidebarPanel(
-                h4("Refresh, download or delete data", style="font-weight:bold"),
-                downloadButton("downloadData", "Download Data"), br(), br(),
-                actionButton("deleteData", label = "Delete Data"), br(), br(),
-                actionButton("refreshData", label = "Refresh Data"), br(),
+                h5("Refresh and download data", style="font-weight:bold"),
+                actionButton("refreshData", label = "1) Refresh Data"), br(), br(),
+                downloadButton("downloadData", "2) Download Data"), br(),
                 hr(style="border-color: black"),
-                fileInput("intensFile", "Upload existing data (CSV File)", 
+                h5("For restart with new data", style="font-weight:bold"),
+                actionButton("deleteData", label = "Delete Data"), br(), 
+                hr(style="border-color: black"),
+                h5("Instead of 1) and 2) one can also upload existing data", style="font-weight:bold"),
+                fileInput("intensFile", "Select CSV file", 
                           multiple = FALSE,
                           accept = c("text/csv", 
                                      "text/comma-separated-values,text/plain",
                                      ".csv")), hr(style="border-color: black"),
-                actionButton("expInfo", label = "Upload Experiment Info")
+                actionButton("expInfo", label = "3) Upload Experiment Info")
               ),
               mainPanel(
                 DTOutput("intens")
@@ -160,7 +167,8 @@ ui <- fluidPage(
           tabPanel("Experiment Info", value = "tab4",
             sidebarLayout(
               sidebarPanel(
-                fileInput("expFile", "Upload existing data (CSV File) (experiment info or merged data)", 
+                h5("1) Upload experiment info or upload existing merged data and go to 5)", style="font-weight:bold"),
+                fileInput("expFile", "Select CSV file", 
                           multiple = FALSE,
                           accept = c("text/csv", 
                                      "text/comma-separated-values,text/plain",
@@ -179,16 +187,19 @@ ui <- fluidPage(
                                          "Double Quote" = '"',
                                          "Single Quote" = "'"),
                              selected = '"'),  hr(style="border-color: black"),
-                h4("Select ID columns and merge datasets", style="font-weight:bold"),
+                h5("2) Select ID columns and merge datasets", style="font-weight:bold"),
                 textInput("mergeIntens", label = "ID Column Intensity Data", value = "File"),
                 textInput("mergeExp", label = "ID Column Experiment Info", value = "File"),
-                actionButton("merge", label = "Merge With Intensity Data"), br(),
+                actionButton("merge", label = "2) Merge With Intensity Data"), br(),
                 hr(style="border-color: black"),
-                downloadButton("downloadData2", "Download Data"), br(), br(),
-                actionButton("deleteData2", label = "Delete Data"), br(), br(),
-                actionButton("refreshData2", label = "Refresh Data"), br(),
+                h5("Refresh and download data", style="font-weight:bold"),
+                actionButton("refreshData2", label = "3) Refresh Data"), br(), br(),
+                downloadButton("downloadData2", "4) Download Data"), br(), 
                 hr(style="border-color: black"),
-                actionButton("prepare", label = "Prepare Calibration")
+                h5("For restart with new data", style="font-weight:bold"),
+                actionButton("deleteData2", label = "Delete Data"), br(),
+                hr(style="border-color: black"),
+                actionButton("prepare", label = "5) Prepare Calibration")
               ),
               mainPanel(
                 DTOutput("experiment")
@@ -198,10 +209,10 @@ ui <- fluidPage(
           tabPanel("Calibration", value = "tab5",
                    sidebarLayout(
                      sidebarPanel(
-                       h4("You MUST first select a folder for the analysis results!", style="font-weight:bold; color: red"),
-                       shinyDirButton('folder', "Select Folder", "Please select a folder:"),
+                       h5("1) You must first select a folder for the analysis results!", style="font-weight:bold"),
+                       shinyDirButton('folder', "1) Select Folder", "Please select a folder"),
                        hr(style="border-color: black"),
-                       h4("Average Technical Replicates", style="font-weight:bold"),
+                       h5("Optional: average technical replicates", style="font-weight:bold"),
                        textInput("combRepsColSI", label = "Column with sample information:", value = "Sample"),
                        numericInput(inputId = "colorsBands",
                                     label = "Number of analytes/colors per band:",
@@ -222,22 +233,24 @@ ui <- fluidPage(
                                     selected = 1), 
                        actionButton("combReps", label = "Average Technical Relplicates"), br(),
                        hr(style="border-color: black"),
-                       h4("Optional: Reshape Data From Long To Wide", style="font-weight:bold"),
+                       h5("Optional: reshape data from long to wide", style="font-weight:bold"),
                        textInput("reshapeCol", label = "Column:", value = "Color"),
                        actionButton("reshapeWide", label = "Reshape"), br(),
                        hr(style="border-color: black"),
-                       h4("Download Preprocessed Data", style="font-weight:bold"),
-                       downloadButton("downloadData3", "Download Data"), br(), br(),
-                       fileInput("prepFile", "Upload existing data (CSV File)", 
+                       h5("One can also upload existing preprocessed data", style="font-weight:bold"),
+                       fileInput("prepFile", "Select CSV file", 
                                  multiple = FALSE,
                                  accept = c("text/csv", 
                                             "text/comma-separated-values,text/plain",
                                             ".csv")), 
                        hr(style="border-color: black"),
-                       h4("Calibration By Linear Model", style="font-weight:bold"),
+                       h5("2) Download Preprocessed Data", style="font-weight:bold"),
+                       downloadButton("downloadData3", "2) Download Data"), br(),
+                       hr(style="border-color: black"),
+                       h5("3) Calibration By Linear Model", style="font-weight:bold"),
                        textAreaInput("formula", label = "Specify Full Model (R formula)"),
                        textAreaInput("subset", label = "Optional: specify subset (logical R expression)"),
-                       actionButton("runCali", label = "Run Calibration Analysis")
+                       actionButton("runCali", label = "3) Run Calibration Analysis")
                      ),
                      mainPanel(
                        verbatimTextOutput("folder"),
@@ -642,7 +655,7 @@ server <- function(input, output, session) {
   recursiveRefresh2 <- eventReactive(input$refreshData2,{
     isolate({
       output$experiment <- renderDT({
-        DF <- CombindedData
+        DF <- CombinedData
         datatable(DF)
       })
     })
@@ -947,7 +960,7 @@ server <- function(input, output, session) {
       write.csv(AveragedData, file, row.names = FALSE)
     }
   )
-  shinyDirChoose(input, 'folder', roots=c(wd='.'), filetypes=c(''))
+  shinyDirChoose(input, 'folder', roots=c(wd="."), filetypes=c(''))
 
   #//////// END OF CODE FOR DOWNLOAD BUTTON /////////////
   
