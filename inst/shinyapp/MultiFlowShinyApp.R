@@ -97,10 +97,18 @@ ui <- fluidPage(
                                     width = NULL
                        ),
                        hr(style="border-color: black"),
+                       h5("Optional: in case of color images",
+                          style="font-weight:bold"),
+                       radioButtons("channel", 
+                                    label = ("Conversion model"), 
+                                    choices = list("luminance" = 1, 
+                                                   "gray" = 2), 
+                                    selected = 1),
+                       hr(style="border-color: black"),
                        h5("2) Select threshold method and apply",
                           style="font-weight:bold"),
                        radioButtons("thresh", 
-                                    label = ("Threshold Method"), 
+                                    label = ("Threshold method"), 
                                     choices = list("Otsu" = 1, 
                                                    "Quantile" = 2), 
                                     selected = 1),
@@ -319,7 +327,8 @@ server <- function(input, output, session) {
     #and the brush will default 
     input$file1
     input$radio
-    input$thresh
+#    input$channel
+#    input$thresh
 
     # and reset plot brush
     session$resetBrush("plot_brush")
@@ -477,6 +486,8 @@ server <- function(input, output, session) {
   
   observe({input$thresh})
   
+  observe({input$channel})
+  
   observe({recursiveThreshold()})
   
   #only executes when Apply Segmentation is clicked
@@ -488,7 +499,14 @@ server <- function(input, output, session) {
         Background <- vector(mode = "list", length = input$bands)
         for(j in 1:input$bands){
           tmp <- seg.list[[i]][[j]]
-          Background[[j]] <- as.numeric(imageData(tmp$.__enclos_env__$private$current_image))
+          img <- tmp$.__enclos_env__$private$current_image
+          if(colorMode(img) > 0){
+            if(input$channel == 1)
+              img <- 1-channel(img, "luminance")
+            if(input$channel == 2)
+              img <- 1-channel(img, "gray")
+          }
+          Background[[j]] <- as.numeric(imageData(img))
         }
         Background.Threshold <- quantile(unlist(Background), 
                                          probs = input$quantile1/100)
@@ -501,6 +519,12 @@ server <- function(input, output, session) {
             count <- count + 1
             tmp <- seg.list[[i]][[j]]
             img <- tmp$.__enclos_env__$private$current_image
+            if(colorMode(img) > 0){
+              if(input$channel == 1)
+                img <- 1-channel(img, "luminance")
+              if(input$channel == 2)
+                img <- 1-channel(img, "gray")
+            }
             signal <- imageData(img) > Background.Threshold
             imageData(img) <- signal
             plot(img)
@@ -518,6 +542,12 @@ server <- function(input, output, session) {
             count <- count + 1
             tmp <- seg.list[[i]][[j]]
             img <- tmp$.__enclos_env__$private$current_image
+            if(colorMode(img) > 0){
+              if(input$channel == 1)
+                img <- 1-channel(img, "luminance")
+              if(input$channel == 2)
+                img <- 1-channel(img, "gray")
+            }
             signal <- imageData(img) > Background.Threshold
             imageData(img) <- (imageData(img) - Background.Threshold)*signal
             shinyImageFile$Mean_Intensities[1,count] <- mean(imageData(img)[signal])
@@ -539,6 +569,12 @@ server <- function(input, output, session) {
             count2 <- count2 + 1
             tmp <- seg.list[[i]][[j]]
             img <- tmp$.__enclos_env__$private$current_image
+            if(colorMode(img) > 0){
+              if(input$channel == 1)
+                img <- 1-channel(img, "luminance")
+              if(input$channel == 2)
+                img <- 1-channel(img, "gray")
+            }
             Background.Threshold[count1] <- otsu(img)
             signal <- imageData(img) > Background.Threshold[count1]
             imageData(img) <- signal
@@ -559,6 +595,12 @@ server <- function(input, output, session) {
             count2 <- count2 + 1
             tmp <- seg.list[[i]][[j]]
             img <- tmp$.__enclos_env__$private$current_image
+            if(colorMode(img) > 0){
+              if(input$channel == 1)
+                img <- 1-channel(img, "luminance")
+              if(input$channel == 2)
+                img <- 1-channel(img, "gray")
+            }
             thr <- otsu(img)
             signal <- imageData(img) > thr
             imageData(img) <- (imageData(img) - thr)*signal
@@ -582,13 +624,12 @@ server <- function(input, output, session) {
       colnames(Med) <- paste0("Median", 1:input$bands)
       if(input$thresh == 1){
         BG.method <- matrix(c("Otsu", NA), nrow = 1, 
-                            ncol = input$bands, byrow = TRUE)
+                            ncol = 2, byrow = TRUE)
         colnames(BG.method) <- c("Background", "Probability")
       }
       if(input$thresh == 2){ 
         BG.method <- matrix(c("quantile", input$quantile1), 
-                            nrow = 1, 
-                            ncol = input$bands, byrow = TRUE)
+                            nrow = 1, ncol = 2, byrow = TRUE)
         colnames(BG.method) <- c("Background", "Probability")
       }
       DF <- data.frame("File" = shinyImageFile$filename,
@@ -844,9 +885,6 @@ server <- function(input, output, session) {
       file.copy(from = system.file("markdown", "CalibrationAnalysis.Rmd", 
                                    package="MultiFlow"), 
                 to = paste0(PATH.OUT, "/CalibrationAnalysis.Rmd"))
-#      rmarkdown::render(input = system.file("rmarkdown", "CalibrationAnalysis.Rmd", 
-#                                            package="MultiFlow"),
-#                        output_file = paste0(PATH.OUT, "/CalibrationAnalysis.html"))
       rmarkdown::render(input = paste0(PATH.OUT, "/CalibrationAnalysis.Rmd"),
                         output_file = paste0(PATH.OUT, "/CalibrationAnalysis.html"))
       

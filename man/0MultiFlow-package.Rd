@@ -14,7 +14,7 @@ automatic report generation via rmarkdown by means of a shiny app.
 \tabular{ll}{
 Package: \tab MultiFlow\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
+Version: \tab 0.2\cr
 Date: \tab 2020-08-25\cr
 Depends: \tab R(>= 4.0.0)\cr
 Imports: \tab stats, shiny, shinyjs, shinythemes, ShinyImage, shinyFiles, EBImage, DT, rmarkdown, ggplot2\cr
