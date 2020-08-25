@@ -4,6 +4,9 @@ The repository includes the development version of R package MultiFlow
 
 ## Installation
 
+At the moment a patched version of package ShinyImage is required, which 
+can be obtained from me on request.
+
 ```{r, eval = FALSE}
 # install.packages("remotes")
 remotes::install_github("stamats/MultiFlow")
