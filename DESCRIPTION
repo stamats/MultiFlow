@@ -1,0 +1,15 @@
+Package: MultiFlow
+Version: 0.1
+Date: 2020-08-25
+Title: Multiplex Lateral Flow Assays
+Authors@R: person("Matthias", "Kohl", role = c("aut", "cre"),
+                  email = "Matthias.Kohl@stamats.de", 
+                  comment = c(ORCID = "0000-0001-9514-8910"))
+Author: Matthias Kohl [aut, cre] (0000-0001-9514-8910)
+Maintainer: Matthias Kohl <Matthias.Kohl@stamats.de>
+Depends: R(>= 4.0.0)
+Imports: stats, shiny, shinyjs, shinythemes, ShinyImage, shinyFiles, EBImage, DT, rmarkdown, ggplot2
+Description: Image analysis (cropping, segmetation, thresholding, feature engineering) of images taken from lateral flow assays, computation of linear calibration models, automatic report generation via rmarkdown by means of a shiny app.
+License: LGPL-3
+URL: http://www.stamats.de/
+
