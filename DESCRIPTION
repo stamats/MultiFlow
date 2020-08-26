@@ -1,5 +1,5 @@
 Package: MultiFlow
-Version: 0.3
+Version: 0.4
 Date: 2020-08-26
 Title: Multiplex Lateral Flow Assays
 Authors@R: person("Matthias", "Kohl", role = c("aut", "cre"),

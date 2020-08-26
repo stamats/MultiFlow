@@ -102,7 +102,10 @@ ui <- fluidPage(
                        radioButtons("channel", 
                                     label = ("Conversion model"), 
                                     choices = list("luminance" = 1, 
-                                                   "gray" = 2), 
+                                                   "gray" = 2,
+                                                   "red" = 3,
+                                                   "green" = 4,
+                                                   "blue" = 5), 
                                     selected = 1),
                        hr(style="border-color: black"),
                        h5("2) Select threshold method and apply",
@@ -504,6 +507,12 @@ server <- function(input, output, session) {
               img <- 1-channel(img, "luminance")
             if(input$channel == 2)
               img <- 1-channel(img, "gray")
+            if(input$channel == 3)
+              img <- 1-channel(img, "red")
+            if(input$channel == 4)
+              img <- 1-channel(img, "green")
+            if(input$channel == 5)
+              img <- 1-channel(img, "blue")
           }
           Background[[j]] <- as.numeric(imageData(img))
         }
@@ -523,6 +532,12 @@ server <- function(input, output, session) {
                 img <- 1-channel(img, "luminance")
               if(input$channel == 2)
                 img <- 1-channel(img, "gray")
+              if(input$channel == 3)
+                img <- 1-channel(img, "red")
+              if(input$channel == 4)
+                img <- 1-channel(img, "green")
+              if(input$channel == 5)
+                img <- 1-channel(img, "blue")
             }
             signal <- imageData(img) > Background.Threshold
             imageData(img) <- signal
@@ -546,6 +561,12 @@ server <- function(input, output, session) {
                 img <- 1-channel(img, "luminance")
               if(input$channel == 2)
                 img <- 1-channel(img, "gray")
+              if(input$channel == 3)
+                img <- 1-channel(img, "red")
+              if(input$channel == 4)
+                img <- 1-channel(img, "green")
+              if(input$channel == 5)
+                img <- 1-channel(img, "blue")
             }
             signal <- imageData(img) > Background.Threshold
             imageData(img) <- (imageData(img) - Background.Threshold)*signal
@@ -573,6 +594,12 @@ server <- function(input, output, session) {
                 img <- 1-channel(img, "luminance")
               if(input$channel == 2)
                 img <- 1-channel(img, "gray")
+              if(input$channel == 3)
+                img <- 1-channel(img, "red")
+              if(input$channel == 4)
+                img <- 1-channel(img, "green")
+              if(input$channel == 5)
+                img <- 1-channel(img, "blue")
             }
             Background.Threshold[count1] <- otsu(img)
             signal <- imageData(img) > Background.Threshold[count1]
@@ -599,6 +626,12 @@ server <- function(input, output, session) {
                 img <- 1-channel(img, "luminance")
               if(input$channel == 2)
                 img <- 1-channel(img, "gray")
+              if(input$channel == 3)
+                img <- 1-channel(img, "red")
+              if(input$channel == 4)
+                img <- 1-channel(img, "green")
+              if(input$channel == 5)
+                img <- 1-channel(img, "blue")
             }
             thr <- otsu(img)
             signal <- imageData(img) > thr

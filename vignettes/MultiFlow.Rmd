@@ -90,7 +90,9 @@ $$
   0.2126 * R + 0.7152 * G + 0.0722 * B
 $$
 where R, G, B stands for the red, green and blue channel of the color image. 
-By selecting "gray" instead, the arithmetic mean of the RGB values is used.
+By selecting "gray", the arithmetic mean of the RGB values is used. 
+Furthermore, the selection of "red", "green" or "blue" allows a color channel
+wise analysis of color images.
 
 
 ## 2) Select threshold method and apply
