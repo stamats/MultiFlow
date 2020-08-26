@@ -84,7 +84,7 @@ which strip shall be analysed.
 
 If the image is a color image, it will be transformed to grayscale. By default,
 we apply the luminance approach, which converts color to grayscale preserving
-luminance; that is, the gayscale values is obtained by 
+luminance; that is, the gayscale values are obtained by 
 
 $$
   0.2126 * R + 0.7152 * G + 0.0722 * B
