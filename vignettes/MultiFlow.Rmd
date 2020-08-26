@@ -50,7 +50,7 @@ six lines.
 
 ## 3) Apply Crop
 
-After loading the image and selecting the number must strips as well as lines
+After loading the image and selecting the number of strips as well as lines
 per strip, the image must be cropped as shown in the following screenshot.
 
 <p>![](01MultiFlowShinyApp.jpg){width=100%}</p>
@@ -84,7 +84,7 @@ which strip shall be analysed.
 
 If the image is a color image, it will be transformed to grayscale. By default,
 we apply the luminance approach, which converts color to grayscale preserving
-luminance; that is, the gayscale values are obtained by 
+luminance; that is, the grayscale values are obtained by 
 
 $$
   0.2126 * R + 0.7152 * G + 0.0722 * B
@@ -200,7 +200,7 @@ by clicking "3) REFRESH DATA".
 ## For restart with new data
 
 We again provide a "DELETE DATA" button for restarting with new images, uploading
-new intensity dara on Tab § or uploading an already existing merged dataset.
+new intensity dara on Tab 3 or uploading an already existing merged dataset.
 
 
 ## 5) Prepare Calibration
@@ -223,13 +223,13 @@ If the merged data includes technical replicates, these replicates can be
 averaged either by the arithmetic mean or the median. For this purpose the 
 name of the column, which enables the identification of the replicates is 
 required. By default we assume that this column is called "Sample". In case
-there is more than one analyte/color per line, one can should set 
+there is more than one analyte/color per line, one should set 
 "Number of analytes/colors per line" to the respective number. If this number
-is larger than 1, an additional field is shown, where one should enter the
+is larger than 1, an additional field will be shown, where one should enter the
 name of the column including the analyte/color information.
 
 
-## Optional: reshap data from long to wide
+## Optional: reshape data from long to wide
 
 If there is more than one analyte/color per line, one might want to combine
 both information into one calibration model. For such cases it is useful to
@@ -240,7 +240,7 @@ wide (analyte/color data in the columns).
 ## One can also upload existing preprocessed data.
 
 Instead of generating the preprocessed data with our app, one can also upload
-preprocessed data and perform the calibration analsis on them. An example
+preprocessed data and perform the calibration analysis on them. An example
 of uploaded preprocessed data that were generated with our app and saved to
 a csv file is shown in the following screenshot.
 
