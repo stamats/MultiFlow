@@ -120,9 +120,9 @@ the screenshot below.
 
 Clicking "3) ADD TO DATA" adds the mean and median of the background subtracted
 intensities of the pixels with intensities above the threshold to the data.
-Now, one can proceed with the second strip of the image or go back to Tab 1 
-and load the next image. When all strips and images are processed one can 
-proceed with 4). 
+Now, one can proceed with the second strip of the image, use a different color
+conversion mode or go back to Tab 1 and load the next image. When all strips 
+and images are processed one can proceed with 4). 
 
 
 ## 4) Switch To Intensity Data
