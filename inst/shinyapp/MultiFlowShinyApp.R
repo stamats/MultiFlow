@@ -100,7 +100,7 @@ ui <- fluidPage(
                        h5("Optional: in case of color images",
                           style="font-weight:bold"),
                        radioButtons("channel", 
-                                    label = ("Conversion model"), 
+                                    label = ("Conversion mode"), 
                                     choices = list("luminance" = 1, 
                                                    "gray" = 2,
                                                    "red" = 3,
