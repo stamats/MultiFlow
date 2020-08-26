@@ -3,13 +3,21 @@
 ###############################################################################
 
 ###########################################################
-## Version 0.1
+## Version 0.3
 ###########################################################
-- Start of development
-- A first version of the shiny app for working with grayscale images.
+- Added User's Guide in form of a vignette to the package.
+
 
 ###########################################################
 ## Version 0.2
 ###########################################################
 - App now also works for color images. For thresholding, these images are 
   transformed to greyscale using luminance or standard RGB averaging.
+
+
+###########################################################
+## Version 0.1
+###########################################################
+- Start of development
+- A first version of the shiny app for working with grayscale images.
+

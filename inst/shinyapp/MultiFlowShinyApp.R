@@ -45,12 +45,12 @@ ui <- fluidPage(
                                          ".png",
                                          ".tiff"))
                            ),hr(style="border-color: black"),
-                           h5("2) Set number of strips and number of bands per strip",
+                           h5("2) Set number of strips and number of lines per strip",
                               style="font-weight:bold"),
                            sliderInput("strips", "Number of strips:", 
-                                       min = 1, max = 7, value = 1),
-                           sliderInput("bands", "Number of bands:", 
-                                       min = 2, max = 5, value = 2),
+                                       min = 1, max = 10, value = 1),
+                           sliderInput("bands", "Number of lines:", 
+                                       min = 2, max = 6, value = 2),
                          ),
                          mainPanel(
                            HTML(
@@ -138,7 +138,7 @@ ui <- fluidPage(
                            verbatimTextOutput("thresh"),br(),
                            h4('Signal Intensity Above Background', align = "center"),
                            plotOutput("plot3"),
-                           h4('Bands After Background Subtraction', align = "center"),
+                           h4('Lines After Background Subtraction', align = "center"),
                            plotOutput("plot4"),
                            verbatimTextOutput("meanIntens"),
                            verbatimTextOutput("medianIntens"),
@@ -224,7 +224,7 @@ ui <- fluidPage(
                        h5("Optional: average technical replicates", style="font-weight:bold"),
                        textInput("combRepsColSI", label = "Column with sample information:", value = "Sample"),
                        numericInput(inputId = "colorsBands",
-                                    label = "Number of analytes/colors per band:",
+                                    label = "Number of analytes/colors per line:",
                                     value = 1,
                                     min = 1,
                                     max = 5,
@@ -253,10 +253,10 @@ ui <- fluidPage(
                                             "text/comma-separated-values,text/plain",
                                             ".csv")), 
                        hr(style="border-color: black"),
-                       h5("2) Download Preprocessed Data", style="font-weight:bold"),
+                       h5("2) Download preprocessed data", style="font-weight:bold"),
                        downloadButton("downloadData3", "2) Download Data"), br(),
                        hr(style="border-color: black"),
-                       h5("3) Calibration By Linear Model", style="font-weight:bold"),
+                       h5("3) Calibration by linear model", style="font-weight:bold"),
                        textAreaInput("formula", label = "Specify Full Model (R formula)"),
                        textAreaInput("subset", label = "Optional: specify subset (logical R expression)"),
                        actionButton("runCali", label = "3) Run Calibration Analysis")
@@ -308,7 +308,6 @@ server <- function(input, output, session) {
     }
     if(input$radio == 2){
       # using sample image
-      system.file("images", "sample.TIF", package="MultiFlow")
       shinyImageFile$shiny_img_origin <- 
         shinyimg$new(system.file("images", "sample.TIF", package="MultiFlow"))
 
