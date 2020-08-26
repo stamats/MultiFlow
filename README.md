@@ -18,6 +18,11 @@ remotes::install_github("stamats/MultiFlow")
 MultiFlow::runMultiFlowApp()
 ```
 
+## Open User's Guide
+```{r}
+vignette("MultiFlow")
+```
+
 ## Description
 Image analysis (cropping, segmetation, thresholding, feature engineering) 
 of images taken from lateral flow assays, computation of linear calibration 
