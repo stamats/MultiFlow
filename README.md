@@ -11,7 +11,7 @@ can be obtained from me on request.
 
 ```{r, eval = FALSE}
 # install.packages("remotes")
-remotes::install_github("stamats/MultiFlow")
+remotes::install_github("stamats/MultiFlow", build_vignettes = TRUE)
 ```
 
 ## Start App
