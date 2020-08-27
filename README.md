@@ -24,6 +24,7 @@ MultiFlow::runMultiFlowApp()
 ```{r}
 vignette("MultiFlow")
 ```
+See also: [MultiFlow User's Guide](https://stamats.github.io/MultiFlow/MultiFlow.html).
 
 ## Description
 Image analysis (cropping, segmetation, thresholding, feature engineering) 
