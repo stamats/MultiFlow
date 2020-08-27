@@ -9,8 +9,19 @@ The repository includes the development version of R package MultiFlow
 At the moment a patched version of package ShinyImage is required, which 
 can be obtained from me on request.
 
+The package requires Bioconductor package EBImage, which should be installed
+first via
+
 ```{r, eval = FALSE}
-# install.packages("remotes")
+## Install package BiocManager
+#install.packages("BiocManager")
+## Use BiocManager to install limma
+BiocManager::install("EBImage")
+```
+
+
+```{r, eval = FALSE}
+#install.packages("remotes")
 remotes::install_github("stamats/MultiFlow", build_vignettes = TRUE)
 ```
 
