@@ -680,6 +680,7 @@ server <- function(input, output, session) {
                          check.names = FALSE)
       }else{
         DF <- data.frame("File" = shinyImageFile$filename,
+                         "Mode" = NA,
                          "Strip" = input$selectStrip,
                          BG.method, AM, Med, 
                          check.names = FALSE)
