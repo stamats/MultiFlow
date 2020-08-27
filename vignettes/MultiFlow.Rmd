@@ -51,12 +51,19 @@ six lines.
 ## 3) Apply Crop
 
 After loading the image and selecting the number of strips as well as lines
-per strip, the image must be cropped as shown in the following screenshot.
+per strip, one needs to click on the image and drag to generate a rectangular 
+selection region on the image. It is best, if each line is roughly in the 
+middle of a respective segment. In addition, there is a segment between 
+two consecutive bands. This segment should not include any part of a line 
+since it can be used for background correction; see below. An example of a
+well selected cropping region is shown in the following screenshot. 
 
 <p>![](01MultiFlowShinyApp.jpg){width=100%}</p>
 
-Clicking "3) APPLY CROP" selects the cropped region as can be seen in the 
-screenshot below.
+Clicking "3) APPLY CROP" the original image is cropped to the region selected. 
+An example can be seen in the screenshot below. If you want to change the 
+cropped region after clicking "3) APPLY CROP", you have to upload the original
+image again.
 
 <p>![](02Cropping.jpg){width=100%}</p>
 
@@ -142,10 +149,11 @@ the data can be saved to a standard csv file.
 ## For restart with new data
 
 We also provide a "DELETE DATA" button for restarting with new images or uploading
-an already existing dataset.
+an already existing dataset. To get an empty window again, one needs to click 
+"3) REFRESH DATA".
 
 
-## Instead of 1) and 2) one can also upload existing data
+## Instead of 1) and 2) you can also upload existing data
 
 Instead of generating new data, one can also upload already existing intensity
 data, that may have been generated even with a different software. Hence, this
@@ -156,9 +164,9 @@ again.
 <p>![](04IntensityData.jpg){width=100%}</p>
 
 
-## 3) Upload Experiment Info
+## 3) Switch To Experiment Info
 
-Clicking "3) UPLOAD EXPERIMENT INFO" changes the Tab to Tab 4, where information
+Clicking "3) SWITCH TO EXPERIMENT INFO" changes the Tab to Tab 4, where information
 about the experiment can be loaded.
 
 
@@ -182,7 +190,7 @@ analysis.
 
 For merging the intensity data with the information about the experiment, one
 has to specify the names of the columns on which the merge should take place. 
-The default is "File", since a "File" column is generated when the intensity
+The default is "File", as a "File" column is generated when the intensity
 data is computed with the app. By clicking "2) MERGE WITH INTENSITY DATA" the
 two datasets will be merged. An example of a table with merged data is
 shown in the screenshot below.
@@ -200,21 +208,23 @@ by clicking "3) REFRESH DATA".
 ## For restart with new data
 
 We again provide a "DELETE DATA" button for restarting with new images, uploading
-new intensity dara on Tab 3 or uploading an already existing merged dataset.
+new intensity data on Tab 3 or uploading an already existing merged dataset.
+To get an empty window again, one needs to click "3) REFRESH DATA".
 
 
 ## 5) Prepare Calibration
 
 Clicking "5) PREPARE CALIBRATION" changes the Tab to Tab 5, where the data 
-can be further preprocessed ant the calibration analysis can be started.
+can be further preprocessed and the calibration analysis can be started.
 
 
 # Tab 5: Calibration
 
-## 1) You must first select a folder for the analysis results!
+## 1) Select a folder for the analysis results
 
-The first step is very important. If one forgets, to select a folder for the
-analysis results before running the analysis, the app will crash. 
+In the first step, a folder for the analysis results can be selected. If
+no folder is specified, a new folder "MultiFlow" will be generated in the home
+directory of the user. 
 
 
 ## Optional: average technical replicates
@@ -237,7 +247,7 @@ reshape the data from long (analyte/color data in the rows) to
 wide (analyte/color data in the columns).
 
 
-## One can also upload existing preprocessed data.
+## You can also upload existing preprocessed data.
 
 Instead of generating the preprocessed data with our app, one can also upload
 preprocessed data and perform the calibration analysis on them. An example
@@ -253,22 +263,25 @@ By clicking "2) DOWNLOAD DATA", the preprocessed data can be downloaded to
 a csv file.
 
 
-## 3) Clibration by linear model
+## 3) Calibration by linear model
 
 In the final step of this Tab, one has to specify the calibration model. 
 This model must be given as a valid R formula for a linear model that will be 
 plugged into R function "lm", which will be applied to fit the respective 
-linear regression model. If an invalid formula is provided, the app will
-crash. An example is visible in the following screenshot.
+linear regression model. An example is visible in the following screenshot.
 
 <p>![](08PreparationCalibrationModel.jpg){width=100%}</p>
+
+Certain simple errors in the formula will be catched and will be shown on 
+Tab 6. However, more complex errors are very likely to lead to a crash of 
+the app. 
 
 Sometimes one only wants to analyse a subset of the data. In such cases the
 subset can be provided in terms of a logical R expression in the field below
 "Optional: specify subset (logical R expression)". 
 
 By pressing "3) RUN CALIBRATION ANALYSIS" the RData-file "CalibrationData.RData"
-will be generated and saved in the specified analysis folder. Next, the rmarkdown
+will be generated and saved in the specified analysis folder. Next, the R markdown
 file "CalibrationAnalysis.Rmd" will be copied to the same folder and will be
 rendered into file "CalibrationAnalysis.html" by using R package "rmarkdown"
 [@rmarkdown]. The results of the calibration analysis will be saved in 
