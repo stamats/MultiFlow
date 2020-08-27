@@ -91,8 +91,8 @@ ui <- fluidPage(
                        numericInput(inputId = "selectStrip",
                                     label = "1) Select strip:",
                                     value = 1,
-                                    min = 0,
-                                    max = 7,
+                                    min = 1,
+                                    max = 1,
                                     step = 1,
                                     width = NULL
                        ),
@@ -486,7 +486,10 @@ server <- function(input, output, session) {
     })
   })
   
-  observe({input$thresh})
+  observe({
+    input$thresh
+    updateNumericInput(session, "selectStrip", max=input$strips)
+  })
   
   observe({input$channel})
   
