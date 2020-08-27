@@ -20,11 +20,15 @@ remotes::install_github("stamats/MultiFlow")
 MultiFlow::runMultiFlowApp()
 ```
 
+
 ## Open User's Guide
+
 ```{r}
 vignette("MultiFlow")
 ```
+
 See also: [MultiFlow User's Guide](https://stamats.github.io/MultiFlow/MultiFlow.html).
+
 
 ## Description
 Image analysis (cropping, segmetation, thresholding, feature engineering) 
