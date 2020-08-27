@@ -25,7 +25,8 @@ y.var <- names(unlist(sapply(colnames(AveragedData),
 x.vars <- names(unlist(sapply(colnames(AveragedData), 
                               grep, x = tmp[2])))
 if(SUBSET != ""){
-  calData <- subset(AveragedData, SUBSET)
+  calData <- eval(call("subset", x =  AveragedData,
+                       subset = parse(text = SUBSET)))
 }else{
   calData <- AveragedData
 }

@@ -163,13 +163,13 @@ ui <- fluidPage(
                 h5("For restart with new data", style="font-weight:bold"),
                 actionButton("deleteData", label = "Delete Data"), br(), 
                 hr(style="border-color: black"),
-                h5("Instead of 1) and 2) one can also upload existing data", style="font-weight:bold"),
+                h5("Instead of 1) and 2) you can also upload existing data", style="font-weight:bold"),
                 fileInput("intensFile", "Select CSV file", 
                           multiple = FALSE,
                           accept = c("text/csv", 
                                      "text/comma-separated-values,text/plain",
                                      ".csv")), hr(style="border-color: black"),
-                actionButton("expInfo", label = "3) Upload Experiment Info")
+                actionButton("expInfo", label = "3) Switch To Experiment Info")
               ),
               mainPanel(
                 DTOutput("intens")
@@ -221,7 +221,7 @@ ui <- fluidPage(
           tabPanel("Calibration", value = "tab5",
                    sidebarLayout(
                      sidebarPanel(
-                       h5("1) You must first select a folder for the analysis results!", style="font-weight:bold"),
+                       h5("1) Select a folder for the analysis results", style="font-weight:bold"),
                        shinyDirButton('folder', "1) Select Folder", "Please select a folder"),
                        hr(style="border-color: black"),
                        h5("Optional: average technical replicates", style="font-weight:bold"),
@@ -243,13 +243,13 @@ ui <- fluidPage(
                                     choices = list("Mean" = 1, 
                                                    "Median" = 2), 
                                     selected = 1), 
-                       actionButton("combReps", label = "Average Technical Relplicates"), br(),
+                       actionButton("combReps", label = "Average Technical Replicates"), br(),
                        hr(style="border-color: black"),
                        h5("Optional: reshape data from long to wide", style="font-weight:bold"),
                        textInput("reshapeCol", label = "Column:", value = "Color"),
                        actionButton("reshapeWide", label = "Reshape"), br(),
                        hr(style="border-color: black"),
-                       h5("One can also upload existing preprocessed data", style="font-weight:bold"),
+                       h5("You can also upload existing preprocessed data", style="font-weight:bold"),
                        fileInput("prepFile", "Select CSV file", 
                                  multiple = FALSE,
                                  accept = c("text/csv", 
@@ -664,10 +664,26 @@ server <- function(input, output, session) {
                             nrow = 1, ncol = 2, byrow = TRUE)
         colnames(BG.method) <- c("Background", "Probability")
       }
-      DF <- data.frame("File" = shinyImageFile$filename,
-                       "Strip" = input$selectStrip,
-                       BG.method, AM, Med, 
-                       check.names = FALSE)
+      seg.list <- shinyImageFile$segmentation_list
+      tmp <- seg.list[[1]][[1]]
+      img <- tmp$.__enclos_env__$private$current_image
+      if(colorMode(img) > 0){
+        if(input$channel == 1) MODE <- "luminance"
+        if(input$channel == 2) MODE <- "gray"
+        if(input$channel == 3) MODE <- "red"
+        if(input$channel == 4) MODE <- "green"
+        if(input$channel == 5) MODE <- "blue"
+        DF <- data.frame("File" = shinyImageFile$filename,
+                         "Mode" = MODE,
+                         "Strip" = input$selectStrip,
+                         BG.method, AM, Med, 
+                         check.names = FALSE)
+      }else{
+        DF <- data.frame("File" = shinyImageFile$filename,
+                         "Strip" = input$selectStrip,
+                         BG.method, AM, Med, 
+                         check.names = FALSE)
+      }
       if(inherits(try(IntensData, silent = TRUE), "try-error"))
         IntensData <<- DF
       else
@@ -830,6 +846,12 @@ server <- function(input, output, session) {
   observe({recursivePrepare()})
   
   recursivePrepare <- eventReactive(input$prepare,{
+    DF <<- CombinedData
+    
+    output$calibration <- renderDT({
+      datatable(DF)
+    })
+    
     updateTabsetPanel(session, "tabs", selected = "tab5")
   })
   
@@ -908,8 +930,23 @@ server <- function(input, output, session) {
   
   recursiveRunCali <- eventReactive(input$runCali,{
     isolate({
-      PATH.OUT <- parseDirPath(c(wd=fs::path_home()), input$folder)
+      if(is.integer(input$folder)){
+        PATH.OUT <- paste0(fs::path_home(), "/MultiFlow")
+        fs::dir_create(PATH.OUT)
+        output$folder <- renderPrint({
+          paste0("Folder for Results: ", PATH.OUT)
+        })
+      }else
+        PATH.OUT <- parseDirPath(c(wd=fs::path_home()), input$folder)
+      
       FORMULA <- input$formula
+      
+      if(inherits(try(as.formula(FORMULA), silent = TRUE), "try-error")){
+        output$modelSummary <- renderPrint({ as.formula(FORMULA) })
+        updateTabsetPanel(session, "tabs", selected = "tab6")
+        return(NULL)
+      }
+      
       SUBSET <- input$subset
       save(AveragedData, FORMULA, SUBSET, PATH.OUT, 
            file = paste0(PATH.OUT,"/CalibrationData.RData"))
@@ -1031,7 +1068,9 @@ server <- function(input, output, session) {
       write.csv(AveragedData, file, row.names = FALSE)
     }
   )
-  shinyDirChoose(input, 'folder', roots=c(wd=fs::path_home()), filetypes=c(''))
+  shinyDirChoose(input, 'folder', 
+                 roots=c(wd=fs::path_home()), 
+                 filetypes=c(''))
 
   #//////// END OF CODE FOR DOWNLOAD BUTTON /////////////
   
