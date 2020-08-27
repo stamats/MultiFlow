@@ -16,9 +16,11 @@ first via
 ## Install package BiocManager
 #install.packages("BiocManager")
 ## Use BiocManager to install limma
-BiocManager::install("EBImage")
+BiocManager::install("EBImage", update = FALSE)
 ```
 
+Next, one can install package MultiFlow, where all remaining dependencies will
+be installed automatically.
 
 ```{r, eval = FALSE}
 #install.packages("remotes")
