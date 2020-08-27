@@ -312,17 +312,17 @@ screenshot.
 
 Our app requires the following R packages to work properly:
 
-* stats [@Rcore]
-* shiny [@shiny]
-* shinyjs [@shinyjs]
-* shinythemes [@shinythemes]
-* ShinyImage [@ShinyImage]
-* fs [@fs]
-* shinyFiles [@shinyFiles]
-* Bioconductor package EBImage [@EBImage]
-* DT [@DT]
-* rmarkdown [@rmarkdown]
-* ggplot2 [@ggplot2]
+* stats: The R Stats Package [@Rcore]
+* shiny: Web Application Framework for R [@shiny]
+* shinyjs: Easily Improve the User Experience of Your Shiny Apps in Seconds [@shinyjs]
+* shinythemes: Themes for Shiny [@shinythemes]
+* ShinyImage: Image Manipulation, with an Emphasis on Journaling [@ShinyImage]
+* fs: Cross-Platform File System Operations Based on 'libuv' [@fs]
+* shinyFiles: A Server-Side File System Viewer for Shiny [@shinyFiles]
+* Bioconductor package EBImage: R package for image processing with applications to cellular phenotypes [@EBImage]
+* DT: A Wrapper of the JavaScript Library 'DataTables' [@DT]
+* rmarkdown: Dynamic Documents for R [@rmarkdown]
+* ggplot2: Elegant Graphics for Data Analysis [@ggplot2]
 
 
 # References
