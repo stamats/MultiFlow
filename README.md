@@ -14,8 +14,8 @@ first via
 
 ```{r, eval = FALSE}
 ## Install package BiocManager
-#install.packages("BiocManager")
-## Use BiocManager to install limma
+if(!require(BiocManager)) install.packages("BiocManager")
+## Use BiocManager to install EBImage
 BiocManager::install("EBImage", update = FALSE)
 ```
 
@@ -23,7 +23,9 @@ Next, one can install package MultiFlow, where all remaining dependencies will
 be installed automatically.
 
 ```{r, eval = FALSE}
-#install.packages("remotes")
+## Install package remotes
+if(!require(remotes)) install.packages("remotes")
+## Install package MultiFlow
 remotes::install_github("stamats/MultiFlow", build_vignettes = TRUE)
 ```
 
