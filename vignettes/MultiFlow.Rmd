@@ -316,7 +316,6 @@ Our app requires the following R packages to work properly:
 * shiny: Web Application Framework for R [@shiny]
 * shinyjs: Easily Improve the User Experience of Your Shiny Apps in Seconds [@shinyjs]
 * shinythemes: Themes for Shiny [@shinythemes]
-* ShinyImage: Image Manipulation, with an Emphasis on Journaling [@ShinyImage]
 * fs: Cross-Platform File System Operations Based on 'libuv' [@fs]
 * shinyFiles: A Server-Side File System Viewer for Shiny [@shinyFiles]
 * Bioconductor package EBImage: R package for image processing with applications to cellular phenotypes [@EBImage]
