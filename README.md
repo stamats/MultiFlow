@@ -45,6 +45,11 @@ vignette("MultiFlow")
 See also: [MultiFlow User's Guide](https://stamats.github.io/MultiFlow/MultiFlow.html).
 
 
+## YouTube Playlist
+
+[MultiFlow YouTube Playlist](https://www.youtube.com/playlist?list=PLRgOZXM8LZ0gv2OJts1c62n0gsXO9VrAN).
+
+
 ## Description
 Image analysis (cropping, segmetation, thresholding, feature engineering) 
 of images taken from lateral flow assays, computation of linear calibration 
