@@ -545,7 +545,7 @@ server <- function(input, output, session) {
             signal <- imageData(img) > Background.Threshold
             imageData(img) <- signal
             plot(img)
-            title(paste0("Band ", count))
+            title(paste0("Line ", count))
           }
         })
         shinyImageFile$Mean_Intensities <- matrix(0, nrow = 1, ncol = input$bands)
@@ -576,7 +576,7 @@ server <- function(input, output, session) {
             shinyImageFile$Mean_Intensities[1,count] <- mean(imageData(img)[signal])
             shinyImageFile$Median_Intensities[1,count] <- median(imageData(img)[signal])
             plot(img)
-            title(paste0("Band ", count))
+            title(paste0("Line ", count))
           }
         })
       }
@@ -608,7 +608,7 @@ server <- function(input, output, session) {
             signal <- imageData(img) > Background.Threshold[count1]
             imageData(img) <- signal
             plot(img)
-            title(paste0("Band ", count2))
+            title(paste0("Line ", count2))
           }
           shinyImageFile$Threshold <- Background.Threshold
         })
@@ -642,7 +642,7 @@ server <- function(input, output, session) {
             shinyImageFile$Mean_Intensities[1,count1] <- mean(imageData(img)[signal])
             shinyImageFile$Median_Intensities[1,count1] <- median(imageData(img)[signal])
             plot(img)
-            title(paste0("Band ", count2))
+            title(paste0("Line ", count2))
           }
         })
       }
@@ -952,6 +952,7 @@ server <- function(input, output, session) {
       }
       
       SUBSET <- input$subset
+      print(SUBSET)
       save(AveragedData, FORMULA, SUBSET, PATH.OUT, 
            file = paste0(PATH.OUT,"/CalibrationData.RData"))
       
