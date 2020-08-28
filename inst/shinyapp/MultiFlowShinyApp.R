@@ -292,7 +292,7 @@ ui <- fluidPage(
 
 ### SERVER ###
 server <- function(input, output, session) {
-  options(shiny.maxRequestSize=50*1024^2) #file can be up to 30 mb; default is 5 mb
+  options(shiny.maxRequestSize=50*1024^2) #file can be up to 50 mb; default is 5 mb
   shinyImageFile <- reactiveValues(shiny_img_origin = NULL, Threshold = NULL)
   
   #checks radio for file input
@@ -319,24 +319,14 @@ server <- function(input, output, session) {
     }
   }) # end of observe
   
-  # second observe
-  # looks at its first 3 lines and observes those inputs
-  # resets the sliders
   observe({
-    #if user uploads new file or 
-    #the sliders will change
-    #and the brush will default 
     input$file1
     input$radio
-#    input$channel
-#    input$thresh
 
-    # and reset plot brush
+    # reset plot brush
     session$resetBrush("plot_brush")
   })
   
-  #//////// CDOE FOR RADIO BUTTONS /////////////
-  #when user uploads file
   #the datapath is different from the one needed to properly recognize photo
   #so this function renames the file 
   renameUpload <- function(inFile){
@@ -368,10 +358,6 @@ server <- function(input, output, session) {
     shinyImageFile$shiny_img_origin <- img
     output$plot1 <- renderPlot({display(img, method = "raster")})
   })
-  
-  #//////// END OF CODE FOR RADIO BUTTONS /////////////
-  
-  #//////// CODE FOR CROPPING AND PLOTS /////////////
   
   #prompts shiny to look at recursive crop
   observe({recursiveCrop()})
@@ -444,7 +430,6 @@ server <- function(input, output, session) {
     for (y in rowcuts) {
       lines(x = c(1, MAX[1]), y = rep(y, 2), col="red")
     }
-#    shinyImageFile$shiny_img_origin <- preview
   }
   
   #shows a preview of the cropped function
@@ -465,7 +450,6 @@ server <- function(input, output, session) {
     
     shinyjs::show("keep")
     shinyjs::show("segmentation")
-    shinyjs::show("undo")
   })
 
   observe({recursiveSegmentation()})
@@ -506,7 +490,6 @@ server <- function(input, output, session) {
   
   observe({recursiveThreshold()})
   
-  #only executes when Apply Segmentation is clicked
   recursiveThreshold <- eventReactive(input$threshold,{
     isolate({
       seg.list <- shinyImageFile$segmentation_list
@@ -1010,10 +993,6 @@ server <- function(input, output, session) {
     })
   })
 
-  #//////// CODE FOR HELPFUL TEXTS /////////////
-  
-  #textbox for user to see what the image ID is
-
   #creates the textbox below plot2 about the plot_brush details and etc
   output$info <- renderText({
     xy_str <- function(e) {
@@ -1053,12 +1032,6 @@ server <- function(input, output, session) {
     paste0("Folder for Results: ", parseDirPath(c(wd=fs::path_home()), input$folder))
   })
   
-  #//////// END OF CODE FOR HELPFUL TEXTS /////////////
-  
-  #//////// CODE FOR DOWNLOAD BUTTON /////////////
-  
-  #_________________DOWNLOAD ____________________
-  
   #allows user to download data
   output$downloadData <- downloadHandler(
     filename = "IntensityData.csv",
@@ -1067,7 +1040,7 @@ server <- function(input, output, session) {
     }
   )
   output$downloadData2 <- downloadHandler(
-    filename = "CombinedData.csv",
+    filename = "MergedData.csv",
     content = function(file) {
        write.csv(CombinedData, file, row.names = FALSE)
     }
@@ -1082,9 +1055,7 @@ server <- function(input, output, session) {
                  roots=c(wd=fs::path_home()), 
                  filetypes=c(''))
 
-  #//////// END OF CODE FOR DOWNLOAD BUTTON /////////////
-  
-  #//////// START OF CODE FOR STOP SHINY APP ///////////////
+
   #When user clicks the return to command line button
   #stops the shiny app
   # prevents user from quitting shiny using ^C on commandline 
@@ -1103,4 +1074,3 @@ server <- function(input, output, session) {
 } #end of server
 
 shinyApp(ui, server)
-
