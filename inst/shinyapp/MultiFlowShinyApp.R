@@ -7,7 +7,6 @@ library(shiny)
 library(shinyjs) 
 library(shinythemes)
 library(EBImage)
-library(ShinyImage)
 library(fs)
 library(shinyFiles)
 library(DT)
@@ -311,12 +310,12 @@ server <- function(input, output, session) {
     }
     if(input$radio == 2){
       # using sample image
-      shinyImageFile$shiny_img_origin <- 
-        shinyimg$new(system.file("images", "sample.TIF", package="MultiFlow"))
+      img <- readImage(system.file("images", "sample.TIF", package="MultiFlow"))
+      shinyImageFile$shiny_img_origin <- img
 
       shinyImageFile$filename <- "sample.TIF"
       #outputs image to plot1 -- main plot
-      output$plot1 <- renderPlot({ shinyImageFile$shiny_img_origin$render() })
+      output$plot1 <- renderPlot({ display(img, method = "raster") })
     }
   }) # end of observe
   
@@ -365,8 +364,9 @@ server <- function(input, output, session) {
       shinyImageFile$Median_Intensities <- NULL
     
     shinyImageFile$filename <- input$file1$name
-    shinyImageFile$shiny_img_origin <- shinyimg$new(renameUpload(input$file1))
-    output$plot1 <- renderPlot({shinyImageFile$shiny_img_origin$render()})
+    img <- readImage(renameUpload(input$file1))
+    shinyImageFile$shiny_img_origin <- img
+    output$plot1 <- renderPlot({display(img, method = "raster")})
   })
   
   #//////// END OF CODE FOR RADIO BUTTONS /////////////
@@ -380,11 +380,15 @@ server <- function(input, output, session) {
   recursiveCrop <- eventReactive(input$keep,{
     isolate({
       p <- input$plot_brush 
-      shinyImageFile$shiny_img_origin$cropxy(p$xmin,p$xmax,p$ymin,p$ymax)
+      img <- shinyImageFile$shiny_img_origin
+      if(length(dim(img)) == 2)
+        shinyImageFile$shiny_img_origin <- img[p$xmin:p$xmax, p$ymin:p$ymax, drop = FALSE]
+      if(length(dim(img)) == 3)
+        shinyImageFile$shiny_img_origin <- img[p$xmin:p$xmax, p$ymin:p$ymax, , drop = FALSE]
       output$plot1 <- renderPlot({
-        shinyImageFile$shiny_img_origin$render()
+        display(shinyImageFile$shiny_img_origin, method = "raster")
       
-        MAX <- shinyImageFile$shiny_img_origin$size()[1:2]
+        MAX <- dim(shinyImageFile$shiny_img_origin)[1:2]
         colcuts <- seq(1, MAX[1], length.out = input$strips + 1)
         rowcuts <- seq(1, MAX[2], length.out = 2*input$bands) # bands + spaces between bands
         
@@ -415,19 +419,22 @@ server <- function(input, output, session) {
   croppedShiny <- function(image){
     p <- input$plot_brush
     validate(need(p != 'NULL', "Highlight a portion of the photo to see a cropped version!"))
-    validate(need(p$xmax <= shinyImageFile$shiny_img_origin$size()[1], 
+    validate(need(p$xmax <= dim(shinyImageFile$shiny_img_origin)[1], 
                   "Highlighted portion is out of bounds on the x-axis of your image 1"))
-    validate(need(p$ymax <= shinyImageFile$shiny_img_origin$size()[2], 
+    validate(need(p$ymax <= dim(shinyImageFile$shiny_img_origin)[2], 
                   "Highlighted portion is out of bounds on the y-axis of your image 1"))
     validate(need(p$xmin >= 0, 
                   "Highlighted portion is out of bounds on the x-axis of your image 2"))
     validate(need(p$ymin >= 0, 
                   "Highlighted portion is out of bounds on the y-axis of your image 2"))
-    preview <- shinyImageFile$shiny_img_origin$copy()
-    preview$cropxy(p$xmin,p$xmax,p$ymin,p$ymax)
-    preview$render()
-
-    MAX <- preview$size()[1:2]
+    preview <- shinyImageFile$shiny_img_origin
+    if(length(dim(preview)) == 2)
+      preview <- preview[p$xmin:p$xmax, p$ymin:p$ymax, drop = FALSE]
+    if(length(dim(preview)) == 3)
+      preview <- preview[p$xmin:p$xmax, p$ymin:p$ymax, , drop = FALSE]
+    display(preview, method = "raster")
+    
+    MAX <- dim(preview)[1:2]
     colcuts <- seq(1, MAX[1], length.out = input$strips + 1)
     rowcuts <- seq(1, MAX[2], length.out = 2*input$bands)
     
@@ -437,6 +444,7 @@ server <- function(input, output, session) {
     for (y in rowcuts) {
       lines(x = c(1, MAX[1]), y = rep(y, 2), col="red")
     }
+#    shinyImageFile$shiny_img_origin <- preview
   }
   
   #shows a preview of the cropped function
@@ -444,9 +452,9 @@ server <- function(input, output, session) {
   output$plot2 <- renderPlot({
     p <- input$plot_brush
     validate(need(p != 'NULL', "Highlight a portion of the photo to see a cropped version!"))
-    validate(need(p$xmax <= shinyImageFile$shiny_img_origin$size()[1], 
+    validate(need(p$xmax <= dim(shinyImageFile$shiny_img_origin)[1], 
                   "Highlighted portion is out of bounds on the x-axis of your image 1"))
-    validate(need(p$ymax <= shinyImageFile$shiny_img_origin$size()[2], 
+    validate(need(p$ymax <= dim(shinyImageFile$shiny_img_origin)[2], 
                   "Highlighted portion is out of bounds on the y-axis of your image 1"))
     validate(need(p$xmin >= 0, 
                   "Highlighted portion is out of bounds on the x-axis of your image 2"))
@@ -465,7 +473,7 @@ server <- function(input, output, session) {
   #only executes when Apply Segmentation is clicked
   recursiveSegmentation <- eventReactive(input$segmentation,{
     isolate({
-      MAX <- shinyImageFile$shiny_img_origin$size()[1:2]
+      MAX <- dim(shinyImageFile$shiny_img_origin)[1:2]
       colcuts <- seq(1, MAX[1], length.out = input$strips + 1)
       rowcuts <- seq(1, MAX[2], length.out = 2*input$bands)
       
@@ -474,8 +482,11 @@ server <- function(input, output, session) {
       for(i in 1:input$strips){
         tmp.list <- vector("list", length = 2*input$bands-1)
         for(j in 1:(2*input$bands-1)){
-          img <- shinyImageFile$shiny_img_origin$copy()
-          img$cropxy(colcuts[i], colcuts[i+1], rowcuts[j], rowcuts[j+1])
+          img <- shinyImageFile$shiny_img_origin
+          if(length(dim(img)) == 2)
+            img <- img[colcuts[i]:colcuts[i+1], rowcuts[j]:rowcuts[j+1]]
+          if(length(dim(img)) == 3)
+            img <- img[colcuts[i]:colcuts[i+1], rowcuts[j]:rowcuts[j+1], , drop = FALSE]
           tmp.list[[j]] <- img
         }
         segmentation.list[[i]] <- tmp.list
@@ -503,8 +514,7 @@ server <- function(input, output, session) {
       if(input$thresh == 2){
         Background <- vector(mode = "list", length = input$bands)
         for(j in 1:input$bands){
-          tmp <- seg.list[[i]][[j]]
-          img <- tmp$.__enclos_env__$private$current_image
+          img <- seg.list[[i]][[j]]
           if(colorMode(img) > 0){
             if(input$channel == 1)
               img <- 1-channel(img, "luminance")
@@ -528,8 +538,7 @@ server <- function(input, output, session) {
           count <- 0
           for(j in Bands){
             count <- count + 1
-            tmp <- seg.list[[i]][[j]]
-            img <- tmp$.__enclos_env__$private$current_image
+            img <- seg.list[[i]][[j]]
             if(colorMode(img) > 0){
               if(input$channel == 1)
                 img <- 1-channel(img, "luminance")
@@ -557,8 +566,7 @@ server <- function(input, output, session) {
           count <- 0
           for(j in Bands){
             count <- count + 1
-            tmp <- seg.list[[i]][[j]]
-            img <- tmp$.__enclos_env__$private$current_image
+            img <- seg.list[[i]][[j]]
             if(colorMode(img) > 0){
               if(input$channel == 1)
                 img <- 1-channel(img, "luminance")
@@ -590,8 +598,7 @@ server <- function(input, output, session) {
           for(j in Bands){
             count1 <- count1 + 1
             count2 <- count2 + 1
-            tmp <- seg.list[[i]][[j]]
-            img <- tmp$.__enclos_env__$private$current_image
+            img <- seg.list[[i]][[j]]
             if(colorMode(img) > 0){
               if(input$channel == 1)
                 img <- 1-channel(img, "luminance")
@@ -622,8 +629,7 @@ server <- function(input, output, session) {
           for(j in Bands){
             count1 <- count1 + 1
             count2 <- count2 + 1
-            tmp <- seg.list[[i]][[j]]
-            img <- tmp$.__enclos_env__$private$current_image
+            img <- seg.list[[i]][[j]]
             if(colorMode(img) > 0){
               if(input$channel == 1)
                 img <- 1-channel(img, "luminance")
@@ -668,8 +674,7 @@ server <- function(input, output, session) {
         colnames(BG.method) <- c("Background", "Probability")
       }
       seg.list <- shinyImageFile$segmentation_list
-      tmp <- seg.list[[1]][[1]]
-      img <- tmp$.__enclos_env__$private$current_image
+      img <- seg.list[[1]][[1]]
       if(colorMode(img) > 0){
         if(input$channel == 1) MODE <- "luminance"
         if(input$channel == 2) MODE <- "gray"

@@ -6,9 +6,6 @@ The repository includes the development version of R package MultiFlow
 
 ## Installation
 
-At the moment a patched version of package ShinyImage is required, which 
-can be obtained from me on request.
-
 The package requires Bioconductor package EBImage, which should be installed
 first via
 

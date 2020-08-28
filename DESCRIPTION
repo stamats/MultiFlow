@@ -1,5 +1,5 @@
 Package: MultiFlow
-Version: 0.4
+Version: 0.5
 Date: 2020-08-28
 Title: Multiplex Lateral Flow Assays
 Authors@R: person("Matthias", "Kohl", role = c("aut", "cre"),
@@ -8,7 +8,7 @@ Authors@R: person("Matthias", "Kohl", role = c("aut", "cre"),
 Author: Matthias Kohl [aut, cre] (0000-0001-9514-8910)
 Maintainer: Matthias Kohl <Matthias.Kohl@stamats.de>
 Depends: R(>= 4.0.0)
-Imports: stats, shiny, shinyjs, shinythemes, ShinyImage, fs, shinyFiles, EBImage, DT, rmarkdown, ggplot2
+Imports: stats, shiny, shinyjs, shinythemes, fs, shinyFiles, EBImage, DT, rmarkdown, ggplot2
 Suggests: knitr
 VignetteBuilder: knitr
 Description: Image analysis (cropping, segmetation, thresholding, feature engineering) of images taken from lateral flow assays, computation of linear calibration models, automatic report generation via rmarkdown by means of a shiny app.
