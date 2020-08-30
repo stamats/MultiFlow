@@ -96,19 +96,24 @@ ui <- fluidPage(
                                     width = NULL
                        ),
                        hr(style="border-color: black"),
-                       h5("Optional: in case of color images",
-                          style="font-weight:bold"),
-                       radioButtons("channel", 
-                                    label = ("Conversion mode"), 
-                                    choices = list("luminance" = 1, 
-                                                   "gray" = 2,
-                                                   "red" = 3,
-                                                   "green" = 4,
-                                                   "blue" = 5), 
-                                    selected = 1),
-                       hr(style="border-color: black"),
                        h5("2) Select threshold method and apply",
                           style="font-weight:bold"),
+                       radioButtons("colorImage", 
+                                    label = ("Color image?"), 
+                                    choices = list("No" = 1, 
+                                                   "Yes" = 2), 
+                                    selected = 1),
+                       conditionalPanel(
+                         condition = "input.colorImage == 2",
+                         radioButtons("channel", 
+                                      label = ("Conversion mode"), 
+                                      choices = list("luminance" = 1, 
+                                                     "gray" = 2,
+                                                     "red" = 3,
+                                                     "green" = 4,
+                                                     "blue" = 5), 
+                                      selected = 1)
+                       ),
                        radioButtons("thresh", 
                                     label = ("Threshold method"), 
                                     choices = list("Otsu" = 1, 
@@ -155,20 +160,20 @@ ui <- fluidPage(
           tabPanel("Intensity Data", value = "tab3",
             sidebarLayout(
               sidebarPanel(
-                h5("Refresh and download data", style="font-weight:bold"),
-                actionButton("refreshData", label = "1) Refresh Data"), br(), br(),
-                downloadButton("downloadData", "2) Download Data"), br(),
-                hr(style="border-color: black"),
-                h5("For restart with new data", style="font-weight:bold"),
-                actionButton("deleteData", label = "Delete Data"), br(), 
-                hr(style="border-color: black"),
-                h5("Instead of 1) and 2) you can also upload existing data", style="font-weight:bold"),
+                h5("You can also upload existing intensity data and go to 3)", style="font-weight:bold"),
                 fileInput("intensFile", "Select CSV file", 
                           multiple = FALSE,
                           accept = c("text/csv", 
                                      "text/comma-separated-values,text/plain",
                                      ".csv")), hr(style="border-color: black"),
-                actionButton("expInfo", label = "3) Switch To Experiment Info")
+                h5("Download intensity data", style="font-weight:bold"),
+                actionButton("refreshData", label = "1) Refresh Data"), br(), br(),
+                downloadButton("downloadData", "2) Download Data"), br(),
+                hr(style="border-color: black"),
+                actionButton("expInfo", label = "3) Switch To Experiment Info"),
+                hr(style="border-color: black"),
+                h5("For restart with new data", style="font-weight:bold"),
+                actionButton("deleteData", label = "Delete Data"), br(), 
               ),
               mainPanel(
                 DTOutput("intens")
@@ -203,14 +208,14 @@ ui <- fluidPage(
                 textInput("mergeExp", label = "ID Column Experiment Info", value = "File"),
                 actionButton("merge", label = "2) Merge With Intensity Data"), br(),
                 hr(style="border-color: black"),
-                h5("Refresh and download data", style="font-weight:bold"),
+                h5("Download merged data", style="font-weight:bold"),
                 actionButton("refreshData2", label = "3) Refresh Data"), br(), br(),
                 downloadButton("downloadData2", "4) Download Data"), br(), 
                 hr(style="border-color: black"),
+                actionButton("prepare", label = "5) Prepare Calibration"),
+                hr(style="border-color: black"),
                 h5("For restart with new data", style="font-weight:bold"),
                 actionButton("deleteData2", label = "Delete Data"), br(),
-                hr(style="border-color: black"),
-                actionButton("prepare", label = "5) Prepare Calibration")
               ),
               mainPanel(
                 DTOutput("experiment")
@@ -223,45 +228,65 @@ ui <- fluidPage(
                        h5("1) Select a folder for the analysis results", style="font-weight:bold"),
                        shinyDirButton('folder', "1) Select Folder", "Please select a folder"),
                        hr(style="border-color: black"),
-                       h5("Optional: average technical replicates", style="font-weight:bold"),
-                       textInput("combRepsColSI", label = "Column with sample information:", value = "Sample"),
-                       numericInput(inputId = "colorsBands",
-                                    label = "Number of analytes/colors per line:",
-                                    value = 1,
-                                    min = 1,
-                                    max = 5,
-                                    step = 1,
-                                    width = NULL
-                       ),
-                       conditionalPanel(
-                         condition = "input.colorsBands > 1",
-                         textInput("combRepsColCL", label = "Column with color information:", value = "Color"),
-                       ),
-                       radioButtons("radioReps", 
-                                    label = ("Choose measure for averaging:"), 
-                                    choices = list("Mean" = 1, 
-                                                   "Median" = 2), 
-                                    selected = 1), 
-                       actionButton("combReps", label = "Average Technical Replicates"), br(),
-                       hr(style="border-color: black"),
-                       h5("Optional: reshape data from long to wide", style="font-weight:bold"),
-                       textInput("reshapeCol", label = "Column:", value = "Color"),
-                       actionButton("reshapeWide", label = "Reshape"), br(),
-                       hr(style="border-color: black"),
-                       h5("You can also upload existing preprocessed data", style="font-weight:bold"),
+#                       h5("Optional: average technical replicates", style="font-weight:bold"),
+#                       hr(style="border-color: black"),
+#                       h5("Optional: reshape data from long to wide", style="font-weight:bold"),
+#                       hr(style="border-color: black"),
+                       h5("You can also upload existing data for calibration and got to 5)", style="font-weight:bold"),
                        fileInput("prepFile", "Select CSV file", 
                                  multiple = FALSE,
                                  accept = c("text/csv", 
                                             "text/comma-separated-values,text/plain",
                                             ".csv")), 
                        hr(style="border-color: black"),
-                       h5("2) Download preprocessed data", style="font-weight:bold"),
-                       downloadButton("downloadData3", "2) Download Data"), br(),
+                       h5("Download calibration data", style="font-weight:bold"),
+                       actionButton("refreshData3", label = "3) Refresh Data"), br(), br(),
+                       downloadButton("downloadData3", "4) Download Data"),
                        hr(style="border-color: black"),
-                       h5("3) Calibration by linear model", style="font-weight:bold"),
-                       textAreaInput("formula", label = "Specify Full Model (R formula)"),
-                       textAreaInput("subset", label = "Optional: specify subset (logical R expression)"),
-                       actionButton("runCali", label = "3) Run Calibration Analysis")
+                       h5("5) Calibration by linear model", style="font-weight:bold"),
+                       radioButtons("radioPrepro", 
+                                    label = ("Further preprocessing steps:"), 
+                                    choices = list("None" = 1, 
+                                                   "Average technical replicates" = 2,
+                                                   "Reshape from long to wide" = 3), 
+                                    selected = 1), 
+                       conditionalPanel(
+                         condition = "input.radioPrepro == 2",
+                         hr(style="border-color: black"),
+                         textInput("combRepsColSI", label = "Column with sample information:", value = "Sample"),
+                         numericInput(inputId = "colorsBands",
+                                      label = "Number of analytes/colors per line:",
+                                      value = 1,
+                                      min = 1,
+                                      max = 5,
+                                      step = 1,
+                                      width = NULL
+                        ),
+                        conditionalPanel(
+                          condition = "input.colorsBands > 1",
+                          textInput("combRepsColCL", label = "Column with color information:", value = "Color"),
+                        ),
+                        radioButtons("radioReps", 
+                                     label = ("Choose measure for averaging:"), 
+                                     choices = list("Mean" = 1, 
+                                                    "Median" = 2), 
+                                     selected = 1), 
+                        actionButton("combReps", label = "Average Technical Replicates"),
+                        hr(style="border-color: black")
+                      ),
+                      conditionalPanel(
+                        hr(style="border-color: black"),
+                        condition = "input.radioPrepro == 3",
+                        textInput("reshapeCol", label = "Column:", value = "Color"),
+                        actionButton("reshapeWide", label = "Reshape"),
+                        hr(style="border-color: black")
+                      ),
+                      textAreaInput("formula", label = "Specify Full Model (R formula)"),
+                      textAreaInput("subset", label = "Optional: specify subset (logical R expression)"),
+                      actionButton("runCali", label = "5) Run Calibration Analysis"),
+                      hr(style="border-color: black"),
+                      h5("For restart with new data", style="font-weight:bold"),
+                      actionButton("deleteData3", label = "Delete Data"), br(),
                      ),
                      mainPanel(
                        verbatimTextOutput("folder"),
@@ -697,7 +722,6 @@ server <- function(input, output, session) {
   })
   
   observe({recursiveShowIntensData()})
-  
   recursiveShowIntensData <- eventReactive(input$showIntensData,{
     isolate({
       updateTabsetPanel(session, "tabs", selected = "tab3")
@@ -705,7 +729,6 @@ server <- function(input, output, session) {
   })
 
   observe({recursiveDelete()})
-  
   recursiveDelete <- eventReactive(input$deleteData,{
     isolate({
       suppressWarnings(rm(IntensData, pos = 1))
@@ -713,16 +736,22 @@ server <- function(input, output, session) {
   })
 
   observe({recursiveDelete2()})
-  
   recursiveDelete2 <- eventReactive(input$deleteData2,{
     isolate({
       suppressWarnings(rm(ExpInfo, pos = 1))
-      suppressWarnings(rm(CombinedData, pos = 1))
+      suppressWarnings(rm(MergedData, pos = 1))
+    })
+  })
+  
+  observe({recursiveDelete3()})
+  recursiveDelete3 <- eventReactive(input$deleteData3,{
+    isolate({
+      suppressWarnings(rm(MergedData, pos = 1))
+      suppressWarnings(rm(CalibrationData, pos = 1))
     })
   })
   
   observe({recursiveRefresh()})
-  
   recursiveRefresh <- eventReactive(input$refreshData,{
     isolate({
       output$intens <- renderDT({
@@ -733,11 +762,20 @@ server <- function(input, output, session) {
   })
 
   observe({recursiveRefresh2()})
-  
   recursiveRefresh2 <- eventReactive(input$refreshData2,{
     isolate({
       output$experiment <- renderDT({
-        DF <- CombinedData
+        DF <- MergedData
+        datatable(DF)
+      })
+    })
+  })
+  
+  observe({recursiveRefresh3()})
+  recursiveRefresh3 <- eventReactive(input$refreshData3,{
+    isolate({
+      output$calibration <- renderDT({
+        DF <- CalibrationData
         datatable(DF)
       })
     })
@@ -749,13 +787,13 @@ server <- function(input, output, session) {
   observeEvent(input$expFile,{
     output$experiment <- renderDT({})
     suppressWarnings(rm(ExpInfo, pos = 1))
-    suppressWarnings(rm(CombinedData, pos = 1))
+    suppressWarnings(rm(MergedData, pos = 1))
   })
   observeEvent(input$prepFile,{
-    output$experiment <- renderDT({})
+    output$calibration <- renderDT({})
     suppressWarnings(rm(IntensData, pos = 1))
     suppressWarnings(rm(ExpInfo, pos = 1))
-    suppressWarnings(rm(CombinedData, pos = 1))
+    suppressWarnings(rm(MergedData, pos = 1))
   })
   
   observe({recursiveExpInfo()})
@@ -765,7 +803,6 @@ server <- function(input, output, session) {
   })
 
   observe({recursiveUploadIntens()})
-
   recursiveUploadIntens <- eventReactive(input$intensFile,{
     isolate({
       req(input$intensFile)
@@ -782,7 +819,6 @@ server <- function(input, output, session) {
   })
   
   observe({recursiveUploadExpFile()})
-  
   recursiveUploadExpFile <- eventReactive(input$expFile,{
     isolate({
       req(input$expFile)
@@ -792,8 +828,8 @@ server <- function(input, output, session) {
         error = function(e){stop(safeError(e))}
       )
       ExpInfo <<- DF
-      CombinedData <<- DF
-      suppressWarnings(rm(AveragedData, pos = 1))
+      MergedData <<- DF
+      suppressWarnings(rm(CalibrationData, pos = 1))
       output$calibration <- renderDT({})
       
       output$experiment <- renderDT({
@@ -803,7 +839,6 @@ server <- function(input, output, session) {
   })
 
   observe({recursiveUploadPrepFile()})
-  
   recursiveUploadPrepFile <- eventReactive(input$prepFile,{
     isolate({
       req(input$prepFile)
@@ -812,7 +847,7 @@ server <- function(input, output, session) {
                        check.names = FALSE),
         error = function(e){stop(safeError(e))}
       )
-      AveragedData <<- DF
+      CalibrationData <<- DF
       output$calibration <- renderDT({
         datatable(DF)
       })
@@ -820,14 +855,14 @@ server <- function(input, output, session) {
   })
   
   observe({recursiveMerge()})
-  
   recursiveMerge <- eventReactive(input$merge,{
     isolate({
       DF <- merge(ExpInfo, IntensData,
                   by.x = input$mergeExp, 
                   by.y = input$mergeIntens, all = TRUE)
       
-      CombinedData <<- DF
+      MergedData <<- DF
+      CalibrationData <<- DF
       
       output$experiment <- renderDT({
         datatable(DF)
@@ -836,9 +871,9 @@ server <- function(input, output, session) {
   })
   
   observe({recursivePrepare()})
-  
   recursivePrepare <- eventReactive(input$prepare,{
-    DF <<- CombinedData
+    DF <- MergedData
+    CalibrationData <<- DF
     
     output$calibration <- renderDT({
       datatable(DF)
@@ -848,18 +883,17 @@ server <- function(input, output, session) {
   })
   
   observe({recursiveCombReps()})
-  
   recursiveCombReps <- eventReactive(input$combReps,{
     isolate({
-      Cols <- c(grep("Mean", colnames(CombinedData)), 
-                grep("Median", colnames(CombinedData)))
+      Cols <- c(grep("Mean", colnames(MergedData)), 
+                grep("Median", colnames(MergedData)))
       RES <- NULL
       if(input$colorsBands > 1){
-        DF <- CombinedData[,c(input$combRepsColSI, input$combRepsColCL)]
+        DF <- MergedData[,c(input$combRepsColSI, input$combRepsColCL)]
         DFuni <- DF[!duplicated(DF),]
         for (i in 1:nrow(DFuni)) {
           sel <- DF[,1] == DFuni[i,1] & DF[,2] == DFuni[i,2]
-          tmp <- CombinedData[sel, ]
+          tmp <- MergedData[sel, ]
           tmp2 <- tmp[1, ]
           if (input$radioReps == 1) #mean
             tmp2[, Cols] <- colMeans(tmp[, Cols], na.rm = TRUE)
@@ -868,9 +902,9 @@ server <- function(input, output, session) {
           RES <- rbind(RES, tmp2)
         }
       }else{
-        DF <- CombinedData[,input$combRepsColSI]
-        for (spl in unique(CombinedData[, input$combRepsColSI])) {
-          tmp <- CombinedData[DF == spl, ]
+        DF <- MergedData[,input$combRepsColSI]
+        for (spl in unique(MergedData[, input$combRepsColSI])) {
+          tmp <- MergedData[DF == spl, ]
           tmp2 <- tmp[1, ]
           if (input$radioReps == 1) #mean
             tmp2[, Cols] <- colMeans(tmp[, Cols], na.rm = TRUE)
@@ -881,7 +915,7 @@ server <- function(input, output, session) {
       }
       rownames(RES) <- 1:nrow(RES)
       RES <- RES[order(RES[,input$combRepsColSI]),]
-      AveragedData <<- RES
+      CalibrationData <<- RES
       
       output$calibration <- renderDT({
         datatable(RES)
@@ -893,11 +927,11 @@ server <- function(input, output, session) {
   
   recursiveReshapeWide <- eventReactive(input$reshapeWide,{
     isolate({
-      rm.file <- (colnames(AveragedData) != colnames(CombinedData)[1] &
-                    colnames(AveragedData) != input$reshapeCol)
-      DF.split <- split(AveragedData[,rm.file], AveragedData[,input$reshapeCol])
+      rm.file <- (colnames(CalibrationData) != colnames(MergedData)[1] &
+                    colnames(CalibrationData) != input$reshapeCol)
+      DF.split <- split(CalibrationData[,rm.file], CalibrationData[,input$reshapeCol])
       
-      N <- length(unique(AveragedData[,input$reshapeCol]))
+      N <- length(unique(CalibrationData[,input$reshapeCol]))
       if(N > 1){
         DF <- DF.split[[1]]
         Cols <- c(grep("Mean", colnames(DF)), 
@@ -907,9 +941,9 @@ server <- function(input, output, session) {
           DF <- merge(DF, DF.split[[i]][,Cols], by = input$combRepsColSI, 
                       suffixes = paste0(".", names(DF.split)[c(i-1,i)]))
         }
-        AveragedData <<- DF
+        CalibrationData <<- DF
       }else{
-        DF <- AveragedData
+        DF <- CalibrationData
       }
       
       output$calibration <- renderDT({
@@ -940,8 +974,7 @@ server <- function(input, output, session) {
       }
       
       SUBSET <- input$subset
-      print(SUBSET)
-      save(AveragedData, FORMULA, SUBSET, PATH.OUT, 
+      save(CalibrationData, FORMULA, SUBSET, PATH.OUT, 
            file = paste0(PATH.OUT,"/CalibrationData.RData"))
       
       file.copy(from = system.file("markdown", "CalibrationAnalysis.Rmd", 
@@ -1042,13 +1075,13 @@ server <- function(input, output, session) {
   output$downloadData2 <- downloadHandler(
     filename = "MergedData.csv",
     content = function(file) {
-       write.csv(CombinedData, file, row.names = FALSE)
+       write.csv(MergedData, file, row.names = FALSE)
     }
   )
   output$downloadData3 <- downloadHandler(
-    filename = "PreprocessedData.csv",
+    filename = "CalibrationData.csv",
     content = function(file) {
-      write.csv(AveragedData, file, row.names = FALSE)
+      write.csv(CalibrationData, file, row.names = FALSE)
     }
   )
   shinyDirChoose(input, 'folder', 
@@ -1065,8 +1098,8 @@ server <- function(input, output, session) {
     isolate({
       suppressWarnings(rm(IntensData, pos = 1))
       suppressWarnings(rm(ExpInfo, pos = 1))
-      suppressWarnings(rm(CombinedData, pos = 1))
-      suppressWarnings(rm(AveragedData, pos = 1))
+      suppressWarnings(rm(MergedData, pos = 1))
+      suppressWarnings(rm(CalibrationData, pos = 1))
       stopApp()
     })
   })

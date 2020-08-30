@@ -20,15 +20,15 @@ We import the data and select the variables needed for the analysis.
 ```{r}
 load(paste0(PATH.OUT, "/CalibrationData.RData"))
 tmp <- strsplit(FORMULA, "~")[[1]]
-y.var <- names(unlist(sapply(colnames(AveragedData), 
+y.var <- names(unlist(sapply(colnames(CalibrationData), 
                              grep, x = tmp[1])))
-x.vars <- names(unlist(sapply(colnames(AveragedData), 
+x.vars <- names(unlist(sapply(colnames(CalibrationData), 
                               grep, x = tmp[2])))
 if(SUBSET != ""){
-  calData <- eval(call("subset", x =  AveragedData,
+  calData <- eval(call("subset", x =  CalibrationData,
                        subset = parse(text = SUBSET)))
 }else{
-  calData <- AveragedData
+  calData <- CalibrationData
 }
 calData <- calData[,c(y.var, x.vars)]
 calData
